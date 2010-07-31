@@ -1,0 +1,210 @@
+{
+http://www.delphipages.com/forum/showthread.php?t=15928
+http://delphi.about.com/od/delphitips2007/qt/rgb_cmyk.htm
+http://delphi.about.com/od/adptips2006/qt/RgbToHsb.htm
+http://delphi.about.com/od/adptips2006/qt/rgb2tcolor.htm
+}
+
+unit uMain;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ExtCtrls, StdCtrls, Mask, JvExMask, JvSpin, ComCtrls;
+
+ type
+    TRGBColor = record
+      Red,
+      Green,
+      Blue : Byte;
+    end;
+ 
+    THSBColor = record
+      Hue,
+      Saturnation,
+      Brightness : Double;
+    end;
+
+    TCMYKColor = record
+      Cyan,
+      Magenta,
+      Yellow,
+      KeyPlate : Integer;
+    end;   
+
+type
+  TfMain = class(TForm)
+    pnCor: TPanel;
+    tmGetPixelColor: TTimer;
+    pcOptions: TPageControl;
+    tsData: TTabSheet;
+    tsOptions: TTabSheet;
+    tbAbout: TTabSheet;
+    gbRGB: TGroupBox;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    lblRed: TLabel;
+    lblGreen: TLabel;
+    lblBlue: TLabel;
+    GroupBox1: TGroupBox;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    lblHue: TLabel;
+    lblSat: TLabel;
+    lblBri: TLabel;
+    Label8: TLabel;
+    hkLock: THotKey;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    CbEnabled: TCheckBox;
+    edClock: TJvSpinEdit;
+    Label1: TLabel;
+    procedure FormCreate(Sender: TObject);
+    procedure tmGetPixelColorTimer(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure edClockChange(Sender: TObject);
+    procedure CbEnabledClick(Sender: TObject);
+  private
+    { Private declarations }
+    Pxl:TBitmap;
+		useCustomPos: Boolean;
+		customX, customY: Integer;
+    function RGBtoCMYK(const rgbColor : TRGBColor) : TCMYKColor;
+    function RGBToHSB(rgb : TRGBColor) : THSBColor;
+  public
+    { Public declarations }
+  end;
+
+var
+  fMain: TfMain;
+
+implementation
+
+Uses Math;
+
+{$R *.dfm}
+
+procedure TfMain.FormCreate(Sender: TObject);
+begin
+	customX := 0;
+  customY := 0;
+	useCustomPos := False; 
+	pncor.Caption := '';
+  Pxl:=TBitmap.Create;
+  Pxl.Width:=1;
+  Pxl.Height:=1;
+  tmGetPixelColor.Interval := Trunc(edClock.Value);
+  pcOptions.activepageindex := 0;
+end;
+
+procedure TfMain.tmGetPixelColorTimer(Sender: TObject);
+var
+	myColor: TColor;
+  P: TPoint;
+  hsb: THSBColor;
+  rgb: TRGBColor;
+
+begin
+	//get mouse position
+	if useCustomPos then
+	begin
+		P.x := customX;
+		P.y := customY;
+	end
+	else
+		GetCursorPos(P);
+
+  //get color
+  BitBlt(Pxl.Canvas.Handle,0,0,1,1,GetDC(0),p.X ,p.y,SRCCOPY);
+  myColor := Pxl.Canvas.Pixels[0,0];
+  pnCor.Color := myColor;
+
+  //get color info
+  rgb.Red := GetRValue(myColor);
+  rgb.Green := GetGValue(myColor);
+  rgb.Blue := GetBValue(myColor);
+  hsb := RGBToHSB(rgb);
+
+	//show info about this color
+  lblRed.Caption   := IntToStr(rgb.Red);
+  lblGreen.Caption := IntToStr(rgb.Green);
+  lblBlue.Caption  := IntToStr(rgb.Blue);
+  lblHue.Caption   := FormatFloat('###,##0',hsb.Hue);
+  lblSat.Caption   := FormatFloat('###,##0',hsb.Saturnation);
+  lblBri.Caption   := FormatFloat('###,##0',hsb.Brightness);  
+end;
+
+procedure TfMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+   Pxl.Free;
+end;
+
+function TfMain.RGBtoCMYK(const rgbColor: TRGBColor): TCMYKColor;
+begin
+   with Result do
+   begin
+     Cyan := 1 - rgbColor.Red;
+     Magenta := 1 - rgbColor.Green;
+     Yellow := 1 - rgbColor.Blue;
+
+     KeyPlate := Min(Min(Cyan, Magenta), Yellow) ;
+ 
+     Cyan := Cyan - KeyPlate;
+     Magenta := Magenta - KeyPlate;
+     Yellow := Yellow - KeyPlate;
+   end;
+end;
+
+function TfMain.RGBToHSB(rgb: TRGBColor): THSBColor;
+ var
+    minRGB, maxRGB, delta : Double;
+    h , s , b : Double ;
+ begin
+    H := 0.0 ;
+    minRGB := Min(Min(rgb.Red, rgb.Green), rgb.Blue) ;
+    maxRGB := Max(Max(rgb.Red, rgb.Green), rgb.Blue) ;
+    delta := ( maxRGB - minRGB ) ;
+    b := maxRGB ;
+    if (maxRGB <> 0.0) then 
+		  s := 255.0 * Delta / maxRGB
+    else 
+		  s := 0.0;
+    if (s <> 0.0) then
+    begin
+      if rgb.Red = maxRGB then 
+			  h := (rgb.Green - rgb.Blue) / Delta
+      else
+        if rgb.Green = maxRGB then 
+				  h := 2.0 + (rgb.Blue - rgb.Red) / Delta
+        else
+          if rgb.Blue = maxRGB then 
+					  h := 4.0 + (rgb.Red - rgb.Green) / Delta
+    end
+    else 
+		  h := -1.0;
+    h := h * 60 ;
+    if h < 0.0 then 
+		  h := h + 360.0;
+    with result do
+    begin
+      Hue := h;
+      Saturnation := s * 100 / 255;
+      Brightness := b * 100 / 255;
+    end;
+ end; 
+
+procedure TfMain.edClockChange(Sender: TObject);
+begin
+	tmGetPixelColor.Interval := Trunc(edClock.Value);
+end;
+
+procedure TfMain.CbEnabledClick(Sender: TObject);
+begin
+	tmGetPixelColor.Enabled := CbEnabled.Checked;
+end;
+
+end.
