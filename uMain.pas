@@ -79,19 +79,25 @@ type
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
-    UpAnRunning: Boolean;
+    UpAnRunning: Boolean; //wait for App to start
     Pxl:TBitmap;
-		useCustomPos, calcRadius: Boolean;  //opcoes do .ini
-    Radius: Integer;                    //opcoes do .ini
+		useCustomPos, calcRadius: Boolean;  //.ini file option
+    Radius: Integer;                    //.ini file option
 		customX, customY: Integer;
     function RGBToHSB(rgb : TRGBColor) : THSBColor;
     procedure SaveConf(Name: String; Value: Integer);
+    function ReadConf(Name: String; DefaultValue: Integer = 0): Integer;
   public
     { Public declarations }
   end;
 
 Const
+  APP_NAME = 'PixLocker';
   CONF = 'Conf';
+  iniRADIUS = 'Radius';
+  iniINTERVAL = 'Interval';
+  iniENABLED = 'Enabled';
+  iniCALC = 'Calculate';
 
 var
   fMain: TfMain;
@@ -103,8 +109,6 @@ Uses Math, inifiles;
 {$R *.dfm}
 
 procedure TfMain.FormCreate(Sender: TObject);
-var
-  IniFile : TIniFile;
 begin
   UpAnRunning := False;
   Radius := 0;
@@ -122,18 +126,10 @@ begin
   pnGreen.Caption := '';
   pnBlue.Caption := '';
 
-  IniFile := Nil;
-  try
-    IniFile := TIniFile.Create(
-      IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))
-      + ChangeFileExt(ExtractFileName(Application.ExeName),'.ini'));
-    edClock.Value := IniFile.ReadInteger(CONF,'Interval',100);
-    EdRadius.Value := IniFile.ReadInteger(CONF,'Radius',10);
-    CbEnabled.Checked := (IniFile.ReadInteger(CONF,'Enabled',1) = 1);
-    CbCalculate.Checked := (IniFile.ReadInteger(CONF,'Calculate',0) = 1);
-  finally
-    IniFile.Free;
-  end;
+  edClock.Value := ReadConf(iniINTERVAL,100);
+  EdRadius.Value := ReadConf(iniRADIUS,10);
+  CbEnabled.Checked := (ReadConf(iniENABLED,1) = 1);
+  CbCalculate.Checked := (ReadConf(iniCALC) = 1);
 
   tmGetPixelColor.Interval := Trunc(edClock.Value);
 end;
@@ -145,10 +141,10 @@ var
 begin
   if UpAnRunning then
   begin
-    if Key = VK_F5 then
+    if Key = VK_F5 then //debug purposes only ;)
       tmGetPixelColorTimer(Self);
 
-  {
+  { TODO: User set his own shortcut
     if (ssCtrl in Shift) then
     begin
       if (ssShift in Shift) then
@@ -160,10 +156,10 @@ begin
             GetCursorPos(P);
             customX := P.x;
             customY := P.y;
-            Self.Caption := 'PixLocker - Locked!';
+            Self.Caption :=   APP_NAME + ' - Locked!';
           end
           else
-            Self.Caption := 'PixLocker - Reloaded';
+            Self.Caption :=   APP_NAME + ' - Reloaded';
           useCustomPos := not useCustomPos;
         end; {
       end;
@@ -310,6 +306,25 @@ begin
    Pxl.Free;
 end;
 
+function TfMain.ReadConf(Name: String; DefaultValue: Integer = 0): Integer;
+var
+  IniFile : TIniFile;
+begin
+  IniFile := Nil;
+  try
+    try
+      IniFile := TIniFile.Create(
+        IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))
+        + ChangeFileExt(ExtractFileName(Application.ExeName),'.ini'));
+      Result := IniFile.ReadInteger(CONF,Name,DefaultValue);
+    except
+      Result := 0;
+    end;
+  finally
+    IniFile.Free;
+  end;
+end;
+
 function TfMain.RGBToHSB(rgb: TRGBColor): THSBColor;
  var
     minRGB, maxRGB, delta : Double;
@@ -367,8 +382,8 @@ procedure TfMain.edClockChange(Sender: TObject);
 begin
   if UpAnRunning then
   begin
+    SaveConf(iniINTERVAL,Trunc(edClock.Value));
 	  tmGetPixelColor.Interval := Trunc(edClock.Value);
-    SaveConf('Interval',Trunc(edClock.Value));
   end;
 end;
 
@@ -376,7 +391,7 @@ procedure TfMain.EdRadiusChange(Sender: TObject);
 begin
   if UpAnRunning then
   begin
-    SaveConf('Radius',Trunc(EdRadius.Value));
+    SaveConf(iniRADIUS,Trunc(EdRadius.Value));
     Radius := Trunc(EdRadius.Value);
   end;
 end;
@@ -385,7 +400,7 @@ procedure TfMain.CbCalculateClick(Sender: TObject);
 begin
   if UpAnRunning then
   begin
-    SaveConf('Calculate',IfThen(CbCalculate.Checked,1,0));
+    SaveConf(iniCALC,IfThen(CbCalculate.Checked,1,0));
     calcRadius := CbCalculate.Checked;
   end;
 end;
@@ -394,7 +409,7 @@ procedure TfMain.CbEnabledClick(Sender: TObject);
 begin
   if UpAnRunning then
   begin
-    SaveConf('Enabled',IfThen(CbEnabled.Checked,1,0));
+    SaveConf(iniENABLED,IfThen(CbEnabled.Checked,1,0));
   	tmGetPixelColor.Enabled := CbEnabled.Checked;
   end;
 end;
