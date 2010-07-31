@@ -8,6 +8,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := 'PixLocker';
   Application.CreateForm(TfMain, fMain);
   Application.Run;
 end.

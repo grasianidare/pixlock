@@ -4,7 +4,7 @@ object fMain: TfMain
   BorderStyle = bsDialog
   Caption = 'PixLocker - Reloaded'
   ClientHeight = 194
-  ClientWidth = 659
+  ClientWidth = 277
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -30,12 +30,6 @@ object fMain: TfMain
     Caption = 'F2 to lock / unlock position'
     WordWrap = True
   end
-  object Bevel1: TBevel
-    Left = 267
-    Top = 8
-    Width = 2
-    Height = 97
-  end
   object pnCor: TPanel
     Left = 12
     Top = 70
@@ -49,7 +43,7 @@ object fMain: TfMain
     Top = 70
     Width = 199
     Height = 119
-    ActivePage = tsOptions
+    ActivePage = tbAbout
     Style = tsFlatButtons
     TabOrder = 1
     object tsData: TTabSheet
@@ -260,9 +254,9 @@ object fMain: TfMain
       object Label12: TLabel
         Left = 16
         Top = 60
-        Width = 99
+        Width = 167
         Height = 13
-        Caption = 'Version 2.06 - Beta 2'
+        Caption = 'Version 2.07 - Release Candidate 1'
       end
       object Label14: TLabel
         Left = 16
@@ -307,7 +301,6 @@ object fMain: TfMain
     TabOrder = 4
   end
   object tmGetPixelColor: TTimer
-    Enabled = False
     OnTimer = tmGetPixelColorTimer
     Left = 224
     Top = 8

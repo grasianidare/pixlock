@@ -1,5 +1,7 @@
 {
-
+PixLock - Small utility for video editing.
+Grasiani Da Ré dos Santos - 2010
+grasianisantos@yahoo.com.br
 
 Where I get a lot of useful code for this project:
 
@@ -67,7 +69,6 @@ type
     CbCalculate: TCheckBox;
     Label13: TLabel;
     Label14: TLabel;
-    Bevel1: TBevel;
     procedure FormCreate(Sender: TObject);
     procedure tmGetPixelColorTimer(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -141,7 +142,7 @@ var
 begin
   if UpAnRunning then
   begin
-    if Key = VK_F5 then //debug purposes only ;)
+    if Key = VK_F5 then //for debug purposes only ;)
       tmGetPixelColorTimer(Self);
 
   { TODO: User set his own shortcut
@@ -243,38 +244,39 @@ begin
         if (Radius > 0) then
         begin
           myColor := getColorFromXY(P.X-radius, P.Y-radius); //1
-          if (myColor <> clNone) then
+          if (myColor <> 0) then
             DoCalc;
 
           myColor := getColorFromXY(P.X, P.Y-radius); //2
-          if (myColor <> clNone) then
+          if (myColor <> 0) then
             DoCalc;
 
           myColor := getColorFromXY(P.X+radius, P.Y-radius); //3
-          if (myColor <> clNone) then
+          if (myColor <> 0) then
             DoCalc;
 
           myColor := getColorFromXY(P.X-radius, P.Y); //4
-          if (myColor <> clNone) then
+          if (myColor <> 0) then
             DoCalc;
 
           myColor := getColorFromXY(P.X+radius, P.Y);//5
-          if (myColor <> clNone) then
+          if (myColor <> 0) then
             DoCalc;
 
           myColor := getColorFromXY(P.X-radius, P.Y+radius); //6
-          if (myColor <> clNone) then
+          if (myColor <> 0) then
             DoCalc;
 
           myColor := getColorFromXY(P.X, P.Y+radius);  //7
-          if (myColor <> clNone) then
+          if (myColor <> 0) then
             DoCalc;
 
           myColor := getColorFromXY(P.X+radius, P.Y+radius); //8
-          if (myColor <> clNone) then
+          if (myColor <> 0) then
             DoCalc;
           if (qtd > 0) then
           begin
+            inc(qtd); //it already starts with the values from the original pixel.
             mediaRGB.Red         := Trunc(mediaRGB.Red /qtd);
             mediaRGB.Green       := Trunc(mediaRGB.Green /qtd);
             mediaRGB.Blue        := Trunc(mediaRGB.Blue /qtd);
@@ -303,6 +305,11 @@ end;
 
 procedure TfMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+    SaveConf(iniENABLED,IfThen(CbEnabled.Checked,1,0));
+    SaveConf(iniCALC,IfThen(CbCalculate.Checked,1,0));
+    SaveConf(iniRADIUS,Trunc(EdRadius.Value));
+    SaveConf(iniINTERVAL,Trunc(edClock.Value));
+
    Pxl.Free;
 end;
 
@@ -382,7 +389,6 @@ procedure TfMain.edClockChange(Sender: TObject);
 begin
   if UpAnRunning then
   begin
-    SaveConf(iniINTERVAL,Trunc(edClock.Value));
 	  tmGetPixelColor.Interval := Trunc(edClock.Value);
   end;
 end;
@@ -391,7 +397,6 @@ procedure TfMain.EdRadiusChange(Sender: TObject);
 begin
   if UpAnRunning then
   begin
-    SaveConf(iniRADIUS,Trunc(EdRadius.Value));
     Radius := Trunc(EdRadius.Value);
   end;
 end;
@@ -400,7 +405,6 @@ procedure TfMain.CbCalculateClick(Sender: TObject);
 begin
   if UpAnRunning then
   begin
-    SaveConf(iniCALC,IfThen(CbCalculate.Checked,1,0));
     calcRadius := CbCalculate.Checked;
   end;
 end;
@@ -409,7 +413,6 @@ procedure TfMain.CbEnabledClick(Sender: TObject);
 begin
   if UpAnRunning then
   begin
-    SaveConf(iniENABLED,IfThen(CbEnabled.Checked,1,0));
   	tmGetPixelColor.Enabled := CbEnabled.Checked;
   end;
 end;
