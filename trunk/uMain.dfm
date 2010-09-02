@@ -48,10 +48,6 @@ object fMain: TfMain
     TabOrder = 1
     object tsData: TTabSheet
       Caption = 'Data'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbRGB: TGroupBox
         Left = 8
         Top = 0
@@ -162,10 +158,6 @@ object fMain: TfMain
     object tsOptions: TTabSheet
       Caption = 'Options'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 8
         Top = 0
@@ -261,10 +253,10 @@ object fMain: TfMain
       end
       object Label12: TLabel
         Left = 16
-        Top = 60
+        Top = 56
         Width = 167
         Height = 13
-        Caption = 'Version 2.07 - Release Candidate 1'
+        Caption = 'Version 2.10 - Release Candidate 2'
       end
       object Label14: TLabel
         Left = 16
