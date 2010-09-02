@@ -48,6 +48,10 @@ object fMain: TfMain
     TabOrder = 1
     object tsData: TTabSheet
       Caption = 'Data'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object gbRGB: TGroupBox
         Left = 8
         Top = 0
@@ -158,6 +162,10 @@ object fMain: TfMain
     object tsOptions: TTabSheet
       Caption = 'Options'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 8
         Top = 0

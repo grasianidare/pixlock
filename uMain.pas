@@ -174,7 +174,11 @@ begin
 end;
 
 procedure TfMain.tmGetPixelColorTimer(Sender: TObject);
+type
+   TIntegerArray = array[0..MaxInt div SizeOf(integer) - 1] of integer;
+ PIntegerArray = ^TIntegerArray;
 var
+ scanLine : PIntegerArray;
 	myColor: TColor;
   P: TPoint;
   hsb, mediaHSB: THSBColor;
@@ -186,7 +190,9 @@ var
     if (X > 0) and (Y > 0) then
     begin
       BitBlt(Pxl.Canvas.Handle,0,0,1,1,GetDC(0),X ,Y,SRCCOPY);
-      Result := Pxl.Canvas.Pixels[0,0];
+      scanLine := Pxl.ScanLine[0];
+      Result := scanLine^[0];
+      //Result := Pxl.Canvas.Pixels[0,0];
     end
     else
       Result := 0;
