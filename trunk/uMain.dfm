@@ -225,7 +225,7 @@ object fMain: TfMain
       Caption = 'About'
       ImageIndex = 2
       object Label9: TLabel
-        Left = 16
+        Left = 3
         Top = 3
         Width = 123
         Height = 13
@@ -238,32 +238,32 @@ object fMain: TfMain
         ParentFont = False
       end
       object Label10: TLabel
-        Left = 16
+        Left = 4
         Top = 16
         Width = 128
         Height = 13
         Caption = 'Grasiani Da R'#233' dos Santos'
       end
       object Label11: TLabel
-        Left = 16
+        Left = 4
         Top = 30
         Width = 142
         Height = 13
         Caption = 'grasianisantos@yahoo.com.br'
       end
       object Label12: TLabel
-        Left = 16
+        Left = 4
         Top = 56
         Width = 167
         Height = 13
-        Caption = 'Version 2.10 - Release Candidate 2'
+        Caption = 'Version 2.11 - Release Candidate 2'
       end
       object Label14: TLabel
-        Left = 16
+        Left = 4
         Top = 72
-        Width = 73
+        Width = 182
         Height = 13
-        Caption = 'Thanks Malow!'
+        Caption = 'Thanks Malow! - Now with madExcept'
       end
     end
   end

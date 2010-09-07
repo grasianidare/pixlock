@@ -1,6 +1,11 @@
 program PixLocker;
 
 uses
+  madExcept,
+  madLinkDisAsm,
+  madListHardware,
+  madListProcesses,
+  madListModules,
   Forms,
   uMain in 'uMain.pas' {fMain};
 

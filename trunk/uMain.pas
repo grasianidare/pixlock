@@ -3,6 +3,9 @@ PixLock - Small utility for video editing.
 Grasiani Da Ré dos Santos - 2010
 grasianisantos@yahoo.com.br
 
+pixLock is a proudly user of madExcept!
+madExcept: http://madshi.net/madExceptDescription.htm
+
 Where I get a lot of useful code for this project:
 
 http://www.delphipages.com/forum/showthread.php?t=15928
