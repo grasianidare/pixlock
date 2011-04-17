@@ -91,6 +91,8 @@ type
     function RGBToHSB(rgb : TRGBColor) : THSBColor;
     procedure SaveConf(Name: String; Value: Integer);
     function ReadConf(Name: String; DefaultValue: Integer = 0): Integer;
+    function getColorFromXY(X, Y: Integer): TColor;
+    function getRGBfromColor(myColor: TColor):TRGBColor;
   public
     { Public declarations }
   end;
@@ -176,37 +178,39 @@ begin
   UpAnRunning := True;
 end;
 
+function TfMain.getColorFromXY(X, Y: Integer): TColor;
+var
+ scanLine : PIntegerArray;
+begin
+    if (X > 0) and (Y > 0) then
+    begin
+       //this is the heart of this program... ;)
+      BitBlt(Pxl.Canvas.Handle,0,0,1,1,GetDC(0),X ,Y,SRCCOPY);
+      result :=Pxl.Canvas.Pixels[0,0];
+      //scanLine := Pxl.ScanLine[0];
+      //Result := scanLine^[0];
+    end
+    else
+      Result := 0;
+end;
+
+function TfMain.getRGBfromColor(myColor: TColor): TRGBColor;
+begin
+    Result.Red := GetRValue(myColor);
+    Result.Green := GetGValue(myColor);
+    Result.Blue := GetBValue(myColor);
+end;
+
 procedure TfMain.tmGetPixelColorTimer(Sender: TObject);
 type
    TIntegerArray = array[0..MaxInt div SizeOf(integer) - 1] of integer;
  PIntegerArray = ^TIntegerArray;
 var
- scanLine : PIntegerArray;
 	myColor: TColor;
   P: TPoint;
   hsb, mediaHSB: THSBColor;
   rgb, mediaRGB: TRGBColor;
   qtd: integer;
-
-  function getColorFromXY(X, Y: Integer): TColor;
-  begin
-    if (X > 0) and (Y > 0) then
-    begin
-      BitBlt(Pxl.Canvas.Handle,0,0,1,1,GetDC(0),X ,Y,SRCCOPY);
-      scanLine := Pxl.ScanLine[0];
-      Result := scanLine^[0];
-      //Result := Pxl.Canvas.Pixels[0,0];
-    end
-    else
-      Result := 0;
-  end;
-
-  function getRGBfromColor(myColor: TColor):TRGBColor;
-  begin
-    Result.Red := GetRValue(myColor);
-    Result.Green := GetGValue(myColor);
-    Result.Blue := GetBValue(myColor);
-  end;
 
   procedure DoCalc;
   begin
